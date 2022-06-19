@@ -1,11 +1,7 @@
 import { Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-// import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useGeolocated } from "react-geolocated";
-// import ReactMapboxGl, { Layer, Feature } from 'react-mapbox-gl';
-// import 'mapbox-gl/dist/mapbox-gl.css';
-// mapboxgl.accessToken = 'pk.eyJ1Ijoiam9zZWVzcGluaGVpcmEiLCJhIjoiY2w0ajZiOHc2MHowbDNkcnl5bDB6bHJmZSJ9.xiimwlo9zxUk8gOC8Csf_g';
 import Map, {
     Marker,
     NavigationControl,
@@ -16,7 +12,7 @@ import Map, {
 import 'mapbox-gl/dist/mapbox-gl.css';
 import useWindowSize from '../../../components/use-window-size';
 
-const MAPBOX_TOKEN = 'pk.eyJ1Ijoiam9zZWVzcGluaGVpcmEiLCJhIjoiY2w0ajZiOHc2MHowbDNkcnl5bDB6bHJmZSJ9.xiimwlo9zxUk8gOC8Csf_g'; // Set your mapbox token here
+const MAPBOX_TOKEN = process.env.REACT_APP_ACCESS_TOKEN_MAP_BOX; // Set your mapbox token here
 
 const initialViewState = {
     // width: '100%',

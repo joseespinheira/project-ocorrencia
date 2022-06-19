@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { Form, Button, Container, Row, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import style from './style.css'
+import './style.css'
 
 function Ocorrencia() {
     let navigate = useNavigate();

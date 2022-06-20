@@ -55,20 +55,20 @@ function Ocorrencia() {
                 <button className="main">
                 </button>
                 <ul>
-                    <li>
-                        <label for="opcao1">Adicionar Ocorrência</label>
-                        <button id="opcao1" onClick={handleClickAdd}>
-                            +
-                        </button>
-                    </li>
+                        <li onClickCapture={handleClickAdd} >
+                            <label htmlFor="opcao1" onClick={handleClickAdd}>Adicionar Ocorrência</label>
+                            <button id="opcao1">
+                                +
+                            </button>
+                        </li>
                     {/* <li>
-                        <label for="opcao2">Opção 2</label>
+                        <label htmlFor="opcao2">Opção 2</label>
                         <button id="opcao2">
                             ⎗
                         </button>
                     </li>
                     <li>
-                        <label for="opcao3">Opção 3</label>
+                        <label htmlFor="opcao3">Opção 3</label>
                         <button id="opcao3">
                             ☏
                         </button>

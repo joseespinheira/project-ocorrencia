@@ -81,7 +81,7 @@ function AdicionarOcorrencia() {
                 <Map
                     ref={mapRef}
                     initialViewState={initialViewState}
-                    style={{ width: size.width, height: size.height-56-38 }}
+                    style={{ width: size.width-10, height: size.height-56-38 }}
 
                     //onStyleLoad={(map)=>onLoaded(map)}
                     mapStyle="mapbox://styles/mapbox/satellite-streets-v11"

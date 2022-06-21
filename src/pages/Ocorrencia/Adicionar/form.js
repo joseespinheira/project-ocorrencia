@@ -8,7 +8,7 @@ import api from '../../../services/index';
 function AdicionarFormulario() {
     let navigate = useNavigate();
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
-    const [request,setRequest] = useState({
+    const [request, setRequest] = useState({
         name: "Teste 10",
         title: "fabiosantanagif@gmail.com",
         description: "sdsds",
@@ -27,18 +27,15 @@ function AdicionarFormulario() {
     })
     const onSubmit = async dados => {
         //recuperar posicao do mapa e jogar no request
-        const data = { ...request,...dados,...{latitude: "-38.970400", longitude: "-12.870400"}}
-        let token = document.head.querySelector('meta[name="csrf-token"]');
+        const data = { ...request, ...dados, ...{ latitude: "-38.970400", longitude: "-12.870400" } }
 
-
-        const response = await api.post('occurrences',data,{ 
-
-            headers: {'Content-Type':'application/json',
-            'Accept':'application/json',
-            'Access-Control-Allow-Origin': '*'
-        }
-          });
-        console.log(response);
+        const response = await api.post('occurrences', data, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            }
+        });
+        navigate(`/home/ocorrencia`);
     };
 
     return (

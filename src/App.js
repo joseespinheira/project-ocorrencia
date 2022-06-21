@@ -5,7 +5,7 @@ function App() {
   let navigate = useNavigate();
 
   const redirect = async (event) => {
-    navigate(`/home/`);
+    navigate(`/home/ocorrencia`);
   }
 
   const handleSubmit = (e) => {

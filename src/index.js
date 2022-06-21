@@ -13,6 +13,7 @@ import Layout from "./components/Layout";
 import AdicionarOcorrencia from "./pages/Ocorrencia/Adicionar";
 import AdicionarFoto from "./pages/Ocorrencia/Adicionar/foto";
 import AdicionarFormulario from "./pages/Ocorrencia/Adicionar/form";
+import OcorrenciaDetalhe from "./pages/Ocorrencia/Detalhe";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root")
@@ -25,11 +26,11 @@ root.render(
 
       {/* Sistema */}
       <Route path="home" element={<Layout />}>
-        <Route path="ocorrencia" element={<Ocorrencia />} >
-        </Route>
-          <Route path="ocorrencia/add" element={<AdicionarOcorrencia />} />
-          <Route path="ocorrencia/addFoto" element={<AdicionarFoto />} />
-          <Route path="ocorrencia/addFormulario" element={<AdicionarFormulario />} />
+        <Route path="ocorrencia/:id" element={<OcorrenciaDetalhe />} />
+        <Route path="ocorrencia" element={<Ocorrencia />} />
+        <Route path="ocorrencia/add" element={<AdicionarOcorrencia />} />
+        <Route path="ocorrencia/addFoto" element={<AdicionarFoto />} />
+        <Route path="ocorrencia/addFormulario" element={<AdicionarFormulario />} />
       </Route>
     </Routes>
   </BrowserRouter>

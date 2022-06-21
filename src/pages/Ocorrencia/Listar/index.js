@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import './style.css'
+import api from '../../../services/index';
 
 function Ocorrencia() {
     let navigate = useNavigate();
@@ -44,6 +45,16 @@ function Ocorrencia() {
         }
     ]);
 
+    useEffect(() => {
+        async function getData() {
+            const dados = await api.get('/occurrences');
+            console.log(dados.data)
+            console.log(dados.data.data)
+            setOcorrencias(dados.data.data);
+        }
+        getData();
+    }, [])
+
     return (
         <div>Listar Ocorrencias
 
@@ -55,12 +66,12 @@ function Ocorrencia() {
                 <button className="main">
                 </button>
                 <ul>
-                        <li onClickCapture={handleClickAdd} >
-                            <label htmlFor="opcao1" onClick={handleClickAdd}>Adicionar Ocorrência</label>
-                            <button id="opcao1">
-                                +
-                            </button>
-                        </li>
+                    <li onClickCapture={handleClickAdd} >
+                        <label htmlFor="opcao1" onClick={handleClickAdd}>Adicionar Ocorrência</label>
+                        <button id="opcao1">
+                            +
+                        </button>
+                    </li>
                     {/* <li>
                         <label htmlFor="opcao2">Opção 2</label>
                         <button id="opcao2">

@@ -32,15 +32,10 @@ function AdicionarFormulario() {
 
 
         const response = await api.post('occurrences',data,{ 
-            withCredentials: true, 
-  xsrfHeaderName: 'X-XSRF-TOKEN',
+
             headers: {'Content-Type':'application/json',
             'Accept':'application/json',
-            'User-Agent': 'insomnia/2022.4.0',
-            'Access-Control-Allow-Origin': '*',
-            '_token': token,
-            'Cache-Control': 'no-cache, private',
-            Authorization: `${token}`,
+            'Access-Control-Allow-Origin': '*'
         }
           });
         console.log(response);

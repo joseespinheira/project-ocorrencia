@@ -28,8 +28,8 @@ function AdicionarFormulario() {
     })
     const onSubmit = async dados => {
         //recuperar posicao do mapa e jogar no request
-        const coords = await AsyncStorage.getItem('@app_ocorrecia_localizacao');
-
+        const dataCoords = await AsyncStorage.getItem('@app_ocorrecia_localizacao');
+        const coords = await JSON.parse(dataCoords);
         const data = { ...request, ...dados, ...coords }
 
         const response = await api.post('occurrences', data, {

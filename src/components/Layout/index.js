@@ -2,9 +2,8 @@ import { Navbar, Nav, Container, Button, Col } from "react-bootstrap";
 import { Outlet, useNavigate } from "react-router-dom";
 
 function Layout() {
-
     return (
-        <div>
+        <div  className="text-center h-100 w-100" >
             <Navbar bg="primary" variant="dark">
                 <Container>
                     <Navbar.Brand href="#home">Sistema</Navbar.Brand>
@@ -17,7 +16,7 @@ function Layout() {
                 </Container>
             </Navbar>
 
-            <Outlet />
+            <Outlet></Outlet>
 
 
         </div>

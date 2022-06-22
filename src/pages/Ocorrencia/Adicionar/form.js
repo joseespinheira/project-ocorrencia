@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState } from "react";
 import { Form, Button, Container, Row, Col } from "react-bootstrap";
 import { useForm } from "react-hook-form";
@@ -27,7 +28,9 @@ function AdicionarFormulario() {
     })
     const onSubmit = async dados => {
         //recuperar posicao do mapa e jogar no request
-        const data = { ...request, ...dados, ...{ latitude: "-38.970400", longitude: "-12.870400" } }
+        const coords = await AsyncStorage.getItem('@app_ocorrecia_localizacao');
+
+        const data = { ...request, ...dados, ...coords }
 
         const response = await api.post('occurrences', data, {
             headers: {
@@ -39,13 +42,14 @@ function AdicionarFormulario() {
     };
 
     return (
-        <div>Formulario
+        <div>
+            <div className="m-3"> <h3>Formulário</h3></div>
             <form onSubmit={handleSubmit(onSubmit)}>
 
-                <Input label="Name" name="name" register={register} required />
-                <Input label="Titulo" name="title" register={register} required />
-                <Input label="Description" name="description" register={register} required />
-                <Input label="Email" name="email" register={register} required />
+                <Input label="Nome" name="name" register={register} required />
+                <Input label="Título" name="title" register={register} required />
+                <Input label="Descrição" name="description" register={register} required />
+                <Input label="E-mail" name="email" register={register} required />
 
                 {/* errors will return when field validation fails  */}
                 {errors.exampleRequired && <span>This field is required</span>}

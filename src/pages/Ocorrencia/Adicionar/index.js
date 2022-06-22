@@ -11,25 +11,20 @@ import Map, {
 } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import useWindowSize from '../../../components/use-window-size';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const MAPBOX_TOKEN = process.env.REACT_APP_ACCESS_TOKEN_MAP_BOX; // Set your mapbox token here
+const MAPBOX_TOKEN = process.env.REACT_APP_ACCESS_TOKEN_MAP_BOX;
 
 const initialViewState = {
-    // width: '100%',
-    //height: '70%',
     latitude: 37.7751,
     longitude: -122.4193,
     zoom: 11
 };
 
 function AdicionarOcorrencia() {
-    // const Map = ReactMapboxGl({
-    //     accessToken:
-    //         'pk.eyJ1Ijoiam9zZWVzcGluaGVpcmEiLCJhIjoiY2w0ajZiOHc2MHowbDNkcnl5bDB6bHJmZSJ9.xiimwlo9zxUk8gOC8Csf_g'
-    // });
     const mapRef = useRef();
     const size = useWindowSize();
-        let navigate = useNavigate();
+    let navigate = useNavigate();
     const { coords, isGeolocationAvailable, isGeolocationEnabled } =
         useGeolocated({
             positionOptions: {
@@ -54,8 +49,15 @@ function AdicionarOcorrencia() {
         }
     }, [coords]);
 
-    const onClick = event => {
-        console.log(event.lngLat)
+    const onClick = async event => {
+        try {
+            await AsyncStorage.setItem('@app_ocorrecia_localizacao', JSON.stringify({
+                latitude: event.lngLat.lat,
+                longitude: event.lngLat.lng
+            }))
+        } catch (e) {
+            // saving error
+        }
         setMarker({
             latitude: event.lngLat.lat,
             longitude: event.lngLat.lng
@@ -68,11 +70,8 @@ function AdicionarOcorrencia() {
     })
 
     const onMapLoad = () => {
-        console.log(mapRef)
-
+        // console.log(mapRef)
         mapRef.current?.flyTo({ center: [lng, lat], duration: 2000 });
-        //mapRef.current?.resize();
-
     };
 
     return (
@@ -81,7 +80,7 @@ function AdicionarOcorrencia() {
                 <Map
                     ref={mapRef}
                     initialViewState={initialViewState}
-                    style={{ width: size.width-10, height: size.height-56-38 }}
+                    style={{ width: size.width - 10, height: size.height - 56 - 38 }}
 
                     //onStyleLoad={(map)=>onLoaded(map)}
                     mapStyle="mapbox://styles/mapbox/satellite-streets-v11"
@@ -100,7 +99,7 @@ function AdicionarOcorrencia() {
                 </Map>
             </div>
             <div className="d-flex justify-content-around align-items-center"><label>Click no mapa para selecionar</label>
-            <Button className="botao" onClick={handleSelecionar}>Proximo -></Button>
+                <Button className="botao" onClick={handleSelecionar}>Proximo -></Button>
             </div>
             {/* {!isGeolocationAvailable ? (
                 <div>Your browser does not support Geolocation</div>

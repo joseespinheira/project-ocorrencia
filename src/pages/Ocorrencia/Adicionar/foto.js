@@ -73,15 +73,15 @@ function AdicionarFoto() {
 
                 onTakePhoto={(dataUri) => { handleTakePhoto(dataUri); }}
             />
-            <div class="input-group">
-                <select class="custom-select" id="inputGroupSelect04">
+            <div className="input-group">
+                <select className="custom-select" id="inputGroupSelect04">
                     <option selected>Selecione a camera...</option>
                     {devices.map((device, key) => (
                     <option value={key}>{device.label}</option>
             ))}
                 </select>
-                <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="button" onClick={handleSelectCan}>Selecionar</button>
+                <div className="input-group-append">
+                    <button className="btn btn-outline-secondary" type="button" onClick={handleSelectCan}>Selecionar</button>
                 </div>
             </div>
             

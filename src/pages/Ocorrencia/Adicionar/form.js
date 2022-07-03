@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import Input from "../../../components/Input";
 import api from '../../../services/index';
 
+
 function AdicionarFormulario() {
     let navigate = useNavigate();
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
@@ -17,6 +18,7 @@ function AdicionarFormulario() {
         rg: 101121515,
         email: "fabiosantanagif@gmail.com",
         issuings_id: 1,
+        clients_id:4,
         type_occurrences_id: 1,
         status_occurrences_id: "1",
         //address: "2 Travessa Do Ouro , Liberdade",
@@ -30,7 +32,11 @@ function AdicionarFormulario() {
         //recuperar posicao do mapa e jogar no request
         const dataCoords = await AsyncStorage.getItem('@app_ocorrecia_localizacao');
         const coords = await JSON.parse(dataCoords);
-        const data = { ...request, ...dados, ...coords }
+
+        const dataImagem = await AsyncStorage.getItem('@app_ocorrecia_imagens');
+        const imagens = await JSON.parse(dataImagem);
+
+        const data = { ...request, ...dados, ...coords,...imagens }
 
         const response = await api.post('occurrences', data, {
             headers: {

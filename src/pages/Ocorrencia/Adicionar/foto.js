@@ -4,18 +4,30 @@ import Camera, { FACING_MODES, IMAGE_TYPES } from 'react-html5-camera-photo';
 import 'react-html5-camera-photo/build/css/index.css';
 import { useCallback, useEffect, useState } from "react";
 import Webcam from "react-webcam";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+async function salvarLocalStorage(img){
+    try {
+        await AsyncStorage.setItem('@app_ocorrecia_imagens', JSON.stringify({
+            imagens: img
+        }))
+    } catch (e) {
+        // saving error
+    }
+}
 
 function AdicionarFoto() {
     let navigate = useNavigate();
 
-    const handleSelecionar = async (event) => {
+    const handleProximo = async (event) => {
+        salvarLocalStorage(img);
         navigate(`/home/ocorrencia/addFormulario`);
     }
 
+    const [img, setImg] = useState([]);
     function handleTakePhoto(dataUri) {
-        // Do stuff with the photo...
-        console.log('takePhoto');
-        console.log(dataUri);
+        setImg([...img, dataUri]);
+        salvarLocalStorage(img);
     }
 
     useEffect(() => {
@@ -26,8 +38,8 @@ function AdicionarFoto() {
 
         async function cameras() {
             const devices = await navigator.mediaDevices.enumerateDevices();
-            const videoDevices = devices.filter(device => device.kind === 'videoinput');
-            console.log(videoDevices)
+            // const videoDevices = devices.filter(device => device.kind === 'videoinput');
+            // console.log(videoDevices)
         }
         cameras();
 
@@ -36,56 +48,75 @@ function AdicionarFoto() {
         console.log(e)
     }
 
+    // const [devices, setDevices] = useState([]);
+    const [frente, setFrente] = useState(true);
 
+    // const handleDevices = useCallback(
+    //     mediaDevices => {
+    //         console.log(mediaDevices)
+    //         setDevices(mediaDevices.filter(({ kind }) => kind === "videoinput"))
+    //     },
+    //     [setDevices]
+    // );
 
-
-    const [deviceId, setDeviceId] = useState({});
-    const [devices, setDevices] = useState([]);
-
-    const handleDevices = useCallback(
-        mediaDevices =>
-            setDevices(mediaDevices.filter(({ kind }) => kind === "videoinput")),
-        [setDevices]
-    );
-
-    useEffect(
-        () => {
-            navigator.mediaDevices.enumerateDevices().then(handleDevices);
-        },
-        [handleDevices]
-    );
-    const handleSelectCan = ()=>{
-        
+    // useEffect(
+    //     () => {
+    //         navigator.mediaDevices.enumerateDevices().then(handleDevices);
+    //     },
+    //     [handleDevices]
+    // );
+    const handleGirar = () => {
+        setFrente(!frente);
+    }
+    const handleRemoveImg = (imagem) => {
+        setImg(img.filter(item => item !== imagem));
+        salvarLocalStorage(img);
     }
     return (
-        <div>Foto
-            <Camera
-                idealResolution={{ width: 640, height: 480 }}
-                isMaxResolution={false}
-                idealFacingMode={FACING_MODES.ENVIRONMENT}
-                onCameraError={(error) => { handleCameraError(error); }}
-                imageType={IMAGE_TYPES.JPG}
-                imageCompression={0.97}
-                isImageMirror={true}
-                isDisplayStartCameraError={true}
-                isFullscreen={false}
-                sizeFactor={1}
+        <div>
+            <label>Foto</label><br></br>
+            <Button className="botao m-1" onClick={handleGirar}>Girar</Button>
+            <Button className="botao" onClick={handleProximo}>Proximo</Button>
+            {frente ?
+                <Camera
+                    idealResolution={{ width: 640, height: 480 }}
+                    isMaxResolution={false}
+                    idealFacingMode={FACING_MODES.USER}
+                    onCameraError={(error) => { handleCameraError(error); }}
+                    imageType={IMAGE_TYPES.JPG}
+                    imageCompression={0.99}
+                    isImageMirror={true}
+                    isDisplayStartCameraError={true}
+                    isFullscreen={false}
+                    sizeFactor={1}
 
-                onTakePhoto={(dataUri) => { handleTakePhoto(dataUri); }}
-            />
-            <div className="input-group">
-                <select className="custom-select" id="inputGroupSelect04">
-                    <option selected>Selecione a camera...</option>
-                    {devices.map((device, key) => (
-                    <option value={key}>{device.label}</option>
-            ))}
-                </select>
-                <div className="input-group-append">
-                    <button className="btn btn-outline-secondary" type="button" onClick={handleSelectCan}>Selecionar</button>
-                </div>
+                    onTakePhoto={(dataUri) => { handleTakePhoto(dataUri); }}
+                />
+                :
+                <Camera
+                    idealResolution={{ width: 640, height: 480 }}
+                    isMaxResolution={false}
+                    idealFacingMode={FACING_MODES.ENVIRONMENT}
+                    onCameraError={(error) => { handleCameraError(error); }}
+                    imageType={IMAGE_TYPES.JPG}
+                    imageCompression={0.97}
+                    isImageMirror={true}
+                    isDisplayStartCameraError={true}
+                    isFullscreen={false}
+                    sizeFactor={1}
+
+                    onTakePhoto={(dataUri) => { handleTakePhoto(dataUri); }}
+                />
+            }
+            <div className="d-flex flex-row overflow-auto">
+                {img ? img.map((imagem, index) =>
+                    <div className="d-flex flex-column m-2 w-25">
+                        <img key={index} className="" src={imagem} />
+                        <Button className="w-auto" onClick={()=>handleRemoveImg(imagem)} >Remover</Button>
+                    </div>
+                ) : ""}
+
             </div>
-            
-            <Button className="botao" onClick={handleSelecionar}>Selecionar</Button>
         </div>
     );
 }

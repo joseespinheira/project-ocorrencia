@@ -13,6 +13,7 @@ const AdicionarUsuario = () => {
         const senhaConfirmacao = e.target.senhaConfirmacao.value;
         if (senha !== senhaConfirmacao) {
             console.log("Senha divergentes")
+            return;
         }
         const data = {
             name,
@@ -22,8 +23,9 @@ const AdicionarUsuario = () => {
         }
         try {
             const retorno = await api.post('client', data);
+            console.log(retorno);
             if (retorno.response.status === 201) {
-                navigate(-1);
+                navigate('/');
                 console.log("Depois implementar login após o cadastro")
             } else {
                 console.log(retorno);

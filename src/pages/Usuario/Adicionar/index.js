@@ -23,10 +23,9 @@ const AdicionarUsuario = () => {
         }
         try {
             const retorno = await api.post('client', data);
-            console.log(retorno);
-            if (retorno.response.status === 201) {
-                navigate('/');
+            if (retorno.status === 201) {
                 console.log("Depois implementar login após o cadastro")
+                navigate('/');
             } else {
                 console.log(retorno);
                 console.log(retorno.message);

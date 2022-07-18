@@ -2,6 +2,7 @@ import { Form, Button, Container, Row, Col } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import 'mapbox-gl/dist/mapbox-gl.css';
 import api from "./services";
+import { GuardarDado } from "./components/Storage";
 function App() {
   let navigate = useNavigate();
 
@@ -20,10 +21,15 @@ function App() {
     }
     try {
       const retorno = await api.post('sanctum/token', data);
-      console.log(retorno);
-      if (retorno.response.status === 200) {
-        console.log(retorno);
-        redirect();
+      if (retorno.status === 200) {
+        const token = retorno.data[1];
+        const usuario = await api.get('auth/me', {headers:{Authorization:`Bearer ${token}`}});
+
+        const dadosUsuario = usuario.data;
+        GuardarDado('@SOAPP_USUARIO', dadosUsuario);
+        GuardarDado('@SOAPP_TOKEN', token);
+        
+        navigate('/home')
       } else {
         console.log(retorno);
         console.log(retorno.message);

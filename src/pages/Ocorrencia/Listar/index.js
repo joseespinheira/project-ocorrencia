@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import './style.css'
 import api from '../../../services/index';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { RecuperarDado } from "../../../components/Storage";
 
 function getTypeOccurrences(type) {
     switch (type) {
@@ -30,6 +31,7 @@ function Ocorrencia() {
             setCarregando(false);
         }
         getData();
+        console.log(RecuperarDado('@SOAPP_USUARIO'));
     }, [])
 
     const storeData = async (value) => {

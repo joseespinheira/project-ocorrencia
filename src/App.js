@@ -20,6 +20,7 @@ function App() {
     }
     try {
       const retorno = await api.post('sanctum/token', data);
+      console.log(retorno);
       if (retorno.response.status === 200) {
         console.log(retorno);
         redirect();

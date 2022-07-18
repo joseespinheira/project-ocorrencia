@@ -1,140 +1,135 @@
 import { Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
-import { useGeolocated } from "react-geolocated";
-import Map, {
-    Marker,
-    NavigationControl,
-    FullscreenControl,
-    ScaleControl,
-    GeolocateControl
-} from 'react-map-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
-import useWindowSize from '../../../components/use-window-size';
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as React from 'react';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import Typography from '@mui/material/Typography';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { useState } from "react";
+import { TextField } from "@mui/material";
 
-const MAPBOX_TOKEN = process.env.REACT_APP_ACCESS_TOKEN_MAP_BOX;
-
-const initialViewState = {
-    latitude: 37.7751,
-    longitude: -122.4193,
-    zoom: 11
-};
-
-function AdicionarOcorrencia() {
-    const mapRef = useRef();
-    const size = useWindowSize();
+const AdicionarOcorrencia = () => {
     let navigate = useNavigate();
-    const { coords, isGeolocationAvailable, isGeolocationEnabled } =
-        useGeolocated({
-            positionOptions: {
-                enableHighAccuracy: false,
-            },
-            userDecisionTimeout: 5000,
-        });
+    const [endereco, setEndereco] = useState(false);
 
-    const handleSelecionar = async (event) => {
+    const handleTirarFoto = () => {
         navigate(`/home/ocorrencia/addFoto`);
     }
 
-    const [lng, setLng] = useState(-8.340951);
-    const [lat, setLat] = useState(-2.8756802);
-    const [zoom, setZoom] = useState(10);
-
-    useEffect(() => {
-        if (coords) {
-            setLat(coords.latitude)
-            setLng(coords.longitude)
-            setZoom(10)
+    const handleDigitarEndereco = () => {
+        setEndereco(true);
+    }
+    
+    const handleSelecionarMapa = () => {
+        setEndereco(false);
+        navigate(`/home/ocorrencia/addMapa`);
+    }
+    
+    
+        const handleSalvar = () => {
+            //validar dados
         }
-    }, [coords]);
-
-    const onClick = async event => {
-        try {
-            await AsyncStorage.setItem('@app_ocorrecia_localizacao', JSON.stringify({
-                latitude: event.lngLat.lat,
-                longitude: event.lngLat.lng
-            }))
-        } catch (e) {
-            // saving error
+    
+        const handleCancelar = () => {
+            navigate(`/home/ocorrencia/`);
         }
-        setMarker({
-            latitude: event.lngLat.lat,
-            longitude: event.lngLat.lng
-        })
-    };
-    const [marker, setMarker] = useState({
-        latitude: -12.86,
-        longitude: -38.35,
-        anchor: "center"
-    })
-
-    const onMapLoad = () => {
-        // console.log(mapRef)
-        mapRef.current?.flyTo({ center: [lng, lat], duration: 2000 });
-    };
-
-    return (
-        <div style={{ height: '100%' }}>
-            <div className="relative w-full h-full">
-                <Map
-                    ref={mapRef}
-                    initialViewState={initialViewState}
-                    style={{ width: size.width - 10, height: size.height - 56 - 38 }}
-
-                    //onStyleLoad={(map)=>onLoaded(map)}
-                    mapStyle="mapbox://styles/mapbox/satellite-streets-v11"
-                    mapboxAccessToken={MAPBOX_TOKEN}
-                    onClick={onClick}
-                    onLoad={onMapLoad}
-                >
-                    <GeolocateControl position="top-left" />
-                    <FullscreenControl position="top-left" />
-                    <NavigationControl position="top-left" />
-                    <ScaleControl />
-
-                    <Marker {...marker}
-
-                    />
-                </Map>
-            </div>
-            <div className="d-flex justify-content-around align-items-center"><label>Click no mapa para selecionar</label>
-                <Button className="botao" onClick={handleSelecionar}>Proximo -></Button>
-            </div>
-            {/* {!isGeolocationAvailable ? (
-                <div>Your browser does not support Geolocation</div>
-            ) : !isGeolocationEnabled ? (
-                <div>Geolocation is not enabled</div>
-            ) : coords ? (
-                <table>
-                    <tbody>
-                        <tr>
-                            <td>latitude</td>
-                            <td>{coords.latitude}</td>
-                        </tr>
-                        <tr>
-                            <td>longitude</td>
-                            <td>{coords.longitude}</td>
-                        </tr>
-                        <tr>
-                            <td>altitude</td>
-                            <td>{coords.altitude}</td>
-                        </tr>
-                        <tr>
-                            <td>heading</td>
-                            <td>{coords.heading}</td>
-                        </tr>
-                        <tr>
-                            <td>speed</td>
-                            <td>{coords.speed}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            ) : (
-                <div>Getting the location data&hellip; </div>
-            )} */}
+    return (<div>
+        <label>Criar Ocorrência</label>
+        <div>
+            <Button className="m-1" onClick={handleTirarFoto}> Tirar Foto</Button>
+            {/* <Button className="m-1">Selecionar foto</Button> */}
         </div>
-    );
+        <Accordion className="mb-2 mt-2">
+            <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel1a-content"
+                id="panel1a-header"
+            >
+                <Typography>Endereço da ocorrência</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+                <Typography>
+                    <div>
+                        <input type="radio" className="btn-check" name="opcao-mapa" id="selecionar-mapa" autoComplete="off" />
+                        <label className="btn btn-outline-primary" htmlFor="selecionar-mapa" onClick={handleSelecionarMapa}>Selecionar no mapa</label>
+
+                        <input type="radio" className="btn-check" name="opcao-mapa" id="digitar-endereco" autoComplete="off" />
+                        <label className="btn btn-outline-primary" htmlFor="digitar-endereco" onClick={handleDigitarEndereco}>Digitar endereço</label>
+
+                        {!endereco ? '' :
+                            <div className="d-grid mt-3">
+                                <TextField className="mb-3" id="cep" label="CEP" variant="outlined" />
+                                <TextField className="mb-3" id="endereco" label="Endereço" variant="outlined" />
+                                <TextField className="mb-3" id="bairro" label="Bairro" variant="outlined" />
+                                <TextField className="mb-3" id="cidade" label="Cidade" variant="outlined" />
+                                <TextField className="mb-3" id="estado" label="Estado" variant="outlined" />
+                                {/* 
+                                <label htmlFor="cep">CEP:</label>
+                                <input type="text" name="cep" id="cep" />
+                                <label htmlFor="endereco">Endereço:</label>
+                                <input type="text" name="endereco" id="endereco" />
+                                <label htmlFor="bairro">Bairro:</label>
+                                <input type="text" name="bairro" id="bairro" />
+                                <label htmlFor="cidade">Cidade:</label>
+                                <input type="text" name="cidade" id="cidade" />
+                                <label htmlFor="estado">Estado:</label>
+                                <input type="text" name="estado" id="estado" /> 
+                                */}
+                            </div>
+                        }
+                    </div>
+                </Typography>
+            </AccordionDetails>
+        </Accordion>
+        <Accordion>
+            <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel2a-content"
+                id="panel2a-header"
+            >
+                <Typography>Dados da ocorrência</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+                <Typography>
+                    <div className="d-grid">
+                        <TextField className="mb-3" id="title" label="Titulo" variant="outlined" />
+                        <TextField className="mb-3" id="tipo-ocorrencia" label="Tipo da ocorrência" variant="outlined" />
+                        <TextField className="mb-3" id="description" label="Descrição" variant="outlined" />
+                        {/* 
+                        <label htmlFor="title">Titulo:</label>
+                        <input type="text" name="title" id="title" />
+                        <label htmlFor="tipo-ocorrencia">Tipo da ocorrência:</label>
+                        <input type="text" name="tipo-ocorrencia" id="tipo-ocorrencia" />
+                        <label htmlFor="description">Descrição:</label>
+                        <input type="text" name="description" id="description" /> 
+                        */}
+                    </div>
+                </Typography>
+            </AccordionDetails>
+        </Accordion>
+        <div style={{ height: 50 }}></div>
+        <div class="card-footer" style={{
+            borderTop: 1,
+            bottom: 0,
+            solid: true,
+            color: '#333',
+            background: "#00000029",
+            left: 0,
+            height: 50,
+            position: "fixed",
+            width: '100%'
+        }}>
+            <div className="m-2 d-flex justify-content-around">
+                <div>
+                    <Button type="button" class="btn btn-danger" onClick={handleCancelar}>Cancelar</Button>
+                </div>
+                <div>
+                    <Button type="button" class="btn btn-success" onClick={handleSalvar}>Salvar</Button>
+                </div>
+            </div>
+        </div>
+    </div>)
 }
 
 export default AdicionarOcorrencia;

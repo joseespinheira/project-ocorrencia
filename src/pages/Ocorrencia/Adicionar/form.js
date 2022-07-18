@@ -1,11 +1,19 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState } from "react";
-import { Form, Button, Container, Row, Col } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import Input from "../../../components/Input";
 import api from '../../../services/index';
 
+async function limparCache() {
+    try {
+        await AsyncStorage.setItem('@app_ocorrecia_localizacao', '')
+        await AsyncStorage.setItem('@app_ocorrecia_imagens', '')
+    } catch (e) {
+        // saving error
+    }
+}
 
 function AdicionarFormulario() {
     let navigate = useNavigate();
@@ -18,7 +26,7 @@ function AdicionarFormulario() {
         rg: 101121515,
         email: "fabiosantanagif@gmail.com",
         issuings_id: 1,
-        clients_id:4,
+        clients_id: 4,
         type_occurrences_id: 1,
         status_occurrences_id: "1",
         //address: "2 Travessa Do Ouro , Liberdade",
@@ -36,7 +44,7 @@ function AdicionarFormulario() {
         const dataImagem = await AsyncStorage.getItem('@app_ocorrecia_imagens');
         const imagens = await JSON.parse(dataImagem);
 
-        const data = { ...request, ...dados, ...coords,...imagens }
+        const data = { ...request, ...dados, ...coords, ...imagens }
 
         const response = await api.post('occurrences', data, {
             headers: {
@@ -45,6 +53,7 @@ function AdicionarFormulario() {
             }
         });
         navigate(`/home/ocorrencia`);
+        limparCache();
     };
 
     return (

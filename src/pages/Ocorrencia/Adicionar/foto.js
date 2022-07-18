@@ -1,12 +1,11 @@
-import { Form, Button, Container, Row, Col } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import Camera, { FACING_MODES, IMAGE_TYPES } from 'react-html5-camera-photo';
 import 'react-html5-camera-photo/build/css/index.css';
-import { useCallback, useEffect, useState } from "react";
-import Webcam from "react-webcam";
+import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-async function salvarLocalStorage(img){
+async function salvarLocalStorage(img) {
     try {
         await AsyncStorage.setItem('@app_ocorrecia_imagens', JSON.stringify({
             imagens: img
@@ -21,7 +20,7 @@ function AdicionarFoto() {
 
     const handleProximo = async (event) => {
         salvarLocalStorage(img);
-        navigate(`/home/ocorrencia/addFormulario`);
+        navigate(-1);
     }
 
     const [img, setImg] = useState([]);
@@ -36,12 +35,12 @@ function AdicionarFoto() {
         }
         navigator.mediaDevices.getUserMedia({ video: true })
 
-        async function cameras() {
-            const devices = await navigator.mediaDevices.enumerateDevices();
+        // async function cameras() {
+            // const devices = await navigator.mediaDevices.enumerateDevices();
             // const videoDevices = devices.filter(device => device.kind === 'videoinput');
             // console.log(videoDevices)
-        }
-        cameras();
+        // }
+        // cameras();
 
     }, [])
     const handleCameraError = (e) => {
@@ -111,8 +110,8 @@ function AdicionarFoto() {
             <div className="d-flex flex-row overflow-auto">
                 {img ? img.map((imagem, index) =>
                     <div className="d-flex flex-column m-2 w-25">
-                        <img key={index} className="" src={imagem} />
-                        <Button className="w-auto" onClick={()=>handleRemoveImg(imagem)} >Remover</Button>
+                        <img key={index} className="" src={imagem} alt="Imagem miniatura"/>
+                        <Button className="w-auto" onClick={() => handleRemoveImg(imagem)} >Remover</Button>
                     </div>
                 ) : ""}
 

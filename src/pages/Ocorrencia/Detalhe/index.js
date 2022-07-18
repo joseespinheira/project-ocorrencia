@@ -18,7 +18,7 @@ const OcorrenciaDetalhe = () => {
             setCarregando(false);
         }
         getData();
-    }, [])
+    }, [id])
 
 
     const handleVoltar = () => {

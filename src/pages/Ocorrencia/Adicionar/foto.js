@@ -7,7 +7,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 async function salvarLocalStorage(img) {
     try {
-        await AsyncStorage.setItem('@app_ocorrecia_imagens', JSON.stringify({
+        await AsyncStorage.setItem('@SOAPP_IMAGENS', JSON.stringify({
             imagens: img
         }))
     } catch (e) {

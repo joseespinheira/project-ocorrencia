@@ -25,7 +25,7 @@ function Mapa() {
     useEffect(() => {
         async function guardarDadosIniciais() {
             try {
-                await AsyncStorage.setItem('@app_ocorrecia_localizacao', JSON.stringify({
+                await AsyncStorage.setItem('@SOAPP_LOCALIZACAO', JSON.stringify({
                     latitude: initialViewState.latitude,
                     longitude: initialViewState.longitude
                 }))
@@ -65,7 +65,7 @@ function Mapa() {
 
     const onClick = async event => {
         try {
-            await AsyncStorage.setItem('@app_ocorrecia_localizacao', JSON.stringify({
+            await AsyncStorage.setItem('@SOAPP_LOCALIZACAO', JSON.stringify({
                 latitude: event.lngLat.lat,
                 longitude: event.lngLat.lng
             }))

@@ -17,6 +17,7 @@ function getTypeOccurrences(type) {
 function Ocorrencia() {
     let navigate = useNavigate();
     const [carregando, setCarregando] = useState(true)
+    const [usuario, setUsuario] = useState({})
 
     const handleClickAdd = async () => {
         navigate(`/home/ocorrencia/add`);
@@ -29,9 +30,11 @@ function Ocorrencia() {
             const dados = await api.get('/occurrences');
             setOcorrencias(dados.data.data);
             setCarregando(false);
+            const dadoUsuarioJson = await RecuperarDado('@SOAPP_USUARIO');
+            const dadoUsuario = await JSON.parse(dadoUsuarioJson);
+            setUsuario(dadoUsuario);
         }
         getData();
-        console.log(RecuperarDado('@SOAPP_USUARIO'));
     }, [])
 
     const storeData = async (value) => {
@@ -64,7 +67,7 @@ function Ocorrencia() {
                                 <li key={index}>
                                     <div onClick={() => handleClickDetalhe(ocorrencia.id)} className="border rounded p-1 mb-1 d-flex justify-content-between" >
                                         <div className="d-flex flex-column">
-                                            <label><b> {ocorrencia.id} - {ocorrencia.description} </b></label>
+                                            <label><b> {ocorrencia.id} - {ocorrencia.title} </b></label>
                                             <label> {ocorrencia.created_at}</label>
                                         </div>
                                         <span className="badge text-bg-info align-self-center">

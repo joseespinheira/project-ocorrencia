@@ -25,11 +25,11 @@ function App() {
         const token = retorno.data[1];
         const usuario = await api.get('auth/me', {headers:{Authorization:`Bearer ${token}`}});
 
-        const dadosUsuario = usuario.data;
-        GuardarDado('@SOAPP_USUARIO', dadosUsuario);
+        const dadosUsuario = usuario.data.data;
+        GuardarDado('@SOAPP_USUARIO',JSON.stringify(dadosUsuario));
         GuardarDado('@SOAPP_TOKEN', token);
         
-        navigate('/home')
+        navigate('/home/ocorrencia')
       } else {
         console.log(retorno);
         console.log(retorno.message);

@@ -9,5 +9,9 @@ export const GuardarDado = async (chave,valor) => {
 }
 
 export const RecuperarDado = async (chave) => {
-    return await AsyncStorage.getItem(chave);
+    return AsyncStorage.getItem(chave);
+}
+
+export const RemoverItem = async (chave) => {
+    return AsyncStorage.removeItem(chave);
 }

@@ -37,58 +37,49 @@ function Ocorrencia() {
         getData();
     }, [])
 
-    const storeData = async (value) => {
-        try {
-          await AsyncStorage.setItem('@app_ocorrecia', value)
-        } catch (e) {
-          // saving error
-        }
-      }
-      storeData("Coelho");
     const handleClickDetalhe = (id) => {
         navigate(`/home/ocorrencia/${id}`);
     }
 
-    return (
-        <>
-            {
-                carregando ?
-                    <div className="bg-secondary h-100 w-100" >
-                        <div className="d-flex align-items-center justify-content-center h-50 w-100 bg-secondary" >
-                            <div className="spinner-border" role="status">
-                                <span className="visually-hidden">Loading...</span>
-                            </div>
-                        </div >
-                    </div > :
-                    <div>
-                        <label className="m-2">Listar ocorrências</label>
-                        <ul className="p-1">
-                            {ocorrencias.map((ocorrencia, index) =>
-                                <li key={index}>
-                                    <div onClick={() => handleClickDetalhe(ocorrencia.id)} className="border rounded p-1 mb-1 d-flex justify-content-between" >
-                                        <div className="d-flex flex-column">
-                                            <label><b> {ocorrencia.id} - {ocorrencia.title} </b></label>
-                                            <label> {ocorrencia.created_at}</label>
-                                        </div>
-                                        <span className="badge text-bg-info align-self-center">
-                                            {getTypeOccurrences(ocorrencia.type_occurrences)}
-                                        </span>
+    return (<>
+        {
+            carregando ?
+                <div className="bg-secondary h-100 w-100" >
+                    <div className="d-flex align-items-center justify-content-center h-50 w-100 bg-secondary" >
+                        <div className="spinner-border" role="status">
+                            <span className="visually-hidden">Loading...</span>
+                        </div>
+                    </div >
+                </div > :
+                <div>
+                    <label className="m-2">Listar ocorrências</label>
+                    <ul className="p-1">
+                        {ocorrencias.map((ocorrencia, index) =>
+                            <li key={index}>
+                                <div onClick={() => handleClickDetalhe(ocorrencia.id)} className="border rounded p-1 mb-1 d-flex justify-content-between" >
+                                    <div className="d-flex flex-column">
+                                        <label><b> {ocorrencia.id} - {ocorrencia.title} </b></label>
+                                        <label> {ocorrencia.created_at}</label>
                                     </div>
-                                </li>
-                            )}
-                        </ul>
+                                    <span className="badge text-bg-info align-self-center">
+                                        {getTypeOccurrences(ocorrencia.type_occurrences)}
+                                    </span>
+                                </div>
+                            </li>
+                        )}
+                    </ul>
 
-                        <div className="fab">
-                            <button className="main">
-                            </button>
-                            <ul>
-                                <li onClickCapture={handleClickAdd} >
-                                    <label htmlFor="opcao1" onClick={handleClickAdd}>Adicionar Ocorrência</label>
-                                    <button id="opcao1">
-                                        +
-                                    </button>
-                                </li>
-                                {/* <li>
+                    <div className="fab">
+                        <button className="main">
+                        </button>
+                        <ul>
+                            <li onClickCapture={handleClickAdd} >
+                                <label htmlFor="opcao1" onClick={handleClickAdd}>Adicionar Ocorrência</label>
+                                <button id="opcao1">
+                                    +
+                                </button>
+                            </li>
+                            {/* <li>
                         <label htmlFor="opcao2">Opção 2</label>
                         <button id="opcao2">
                             ⎗
@@ -100,12 +91,11 @@ function Ocorrencia() {
                             ☏
                         </button>
                     </li> */}
-                            </ul>
-                        </div>
+                        </ul>
                     </div>
-            }
-        </>
-    );
+                </div>
+        }
+    </>);
 }
 
 export default Ocorrencia;

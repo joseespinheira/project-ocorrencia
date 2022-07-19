@@ -10,15 +10,24 @@ import { useState } from "react";
 import { TextField } from "@mui/material";
 import { useEffect, useRef } from "react";
 import api from "../../../services";
-
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import { GuardarDado, RecuperarDado,RemoverItem } from "../../../components/Storage";
+import { GuardarDado, RecuperarDado, RemoverItem } from "../../../components/Storage";
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
 
+
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 const AdicionarOcorrencia = () => {
     let navigate = useNavigate();
@@ -26,9 +35,12 @@ const AdicionarOcorrencia = () => {
     const [typeOccurrence, setTypeOccurrence] = useState([]);
     const [typeOccurrenceSelected, setTypeOccurrenceSelected] = useState('');
     const [localizacao, setLocalizacao] = useState(null);
+    const [imagem, setImagem] = useState(null);
     const [usuario, setUsuario] = useState({});
     const title = useRef('');
     const description = useRef('');
+    const [mensagemErro, setMensagemErro] = React.useState('');
+    const [open, setOpen] = React.useState(false);
 
     const cep = useRef('');
     const endereco = useRef('');
@@ -70,10 +82,19 @@ const AdicionarOcorrencia = () => {
                     const localizacao = await JSON.parse(jsonLocalizacao);
                     setLocalizacao(localizacao);
                 }
-                // recuper informacoes do usuario
+                // recupera informacoes do usuario
                 const dadoUsuarioJson = await RecuperarDado('@SOAPP_USUARIO');
                 const dadoUsuario = await JSON.parse(dadoUsuarioJson);
+                if(dadoUsuario===null){
+                    //caso o usuario não esteja autenticado
+                    navigate('/');
+                }
                 setUsuario(dadoUsuario);
+
+                // recupera informacoes das imagens
+                const dadoImagemJson = await RecuperarDado('@SOAPP_IMAGENS');
+                const dadoImagem = await JSON.parse(dadoImagemJson);
+                setImagem(dadoImagem);
 
             } catch (e) {
                 console.log(e);
@@ -99,15 +120,26 @@ const AdicionarOcorrencia = () => {
 
     }
 
-    const validaCamposObrigatorios=()=>{
+    const validaCamposObrigatorios = () => {
         //retorna true em caso de problemas
+        console.log("aqui")
+        if (botaoIndicaEnderecoDigitado === null) {
+            setMensagemErro({
+                title: "Alerta!",
+                message: "É obrigatório preencher o endereço da ocorrência."
+            })
+            setOpen(true);
+            return true;
+        }
+
         return false;
     }
 
-    const handleSalvar = async (e) => {
+    const handleSalvar = (e) => {
         e.preventDefault();
 
-        if(validaCamposObrigatorios()){
+        if (validaCamposObrigatorios()) {
+            console.log("aqui")
             return
         }
 
@@ -138,22 +170,25 @@ const AdicionarOcorrencia = () => {
 
         //falta as imagens
 
-        const data = { ...localizacao, ...dadoEndereco, ...dadoOcorrencia, ...request }
+        const data = { ...localizacao, ...dadoEndereco, ...dadoOcorrencia, ...imagem, ...request }
 
-        try{
-            const response = await api.post("occurrences",data);
+        async function salvar() {
+            try {
+                const response = await api.post("occurrences", data);
 
-            if(response.status===201){
-                RemoverItem("@SOAPP_FORMULARIO_BOTAO_ENDERECO")
-                RemoverItem("@SOAPP_LOCALIZACAO")
-                RemoverItem("@SOAPP_IMAGENS")
-                navigate("/home/ocorrencia")
-            }else{
-                console.log(response);
+                if (response.status === 201) {
+                    RemoverItem("@SOAPP_FORMULARIO_BOTAO_ENDERECO")
+                    RemoverItem("@SOAPP_LOCALIZACAO")
+                    RemoverItem("@SOAPP_IMAGENS")
+                    navigate("/home/ocorrencia")
+                } else {
+                    console.log(response);
+                }
+            } catch (e) {
+                console.log(e);
             }
-        }catch(e){
-            console.log(e);
         }
+        salvar();
     }
 
     const handleChangeTypeOccurrence = (e) => {
@@ -164,6 +199,26 @@ const AdicionarOcorrencia = () => {
         navigate(`/home/ocorrencia/`);
     }
     return (<div>
+        <Dialog
+            open={open}
+            onClose={() => { setOpen(false) }}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+        >
+            <DialogTitle id="alert-dialog-title">
+                {mensagemErro.title}
+            </DialogTitle>
+            <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                    {mensagemErro.message}
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={() => { setOpen(false) }} autoFocus>
+                    Fechar
+                </Button>
+            </DialogActions>
+        </Dialog>
         <label>Criar Ocorrência</label>
         <div>
             <Button className="m-1" onClick={handleTirarFoto}> Tirar Foto
@@ -174,16 +229,16 @@ const AdicionarOcorrencia = () => {
             <Accordion className="m-2 border">
                 <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
                     <Typography>
-                    {(botaoIndicaEnderecoDigitado !== null) ? 
-                                    <CheckCircleRoundedIcon
-                                        style={{ color: "#05cc30" }}
-                                        fontSize="default"
-                                    ></CheckCircleRoundedIcon>
-                                    :
-                                    <CloseRoundedIcon
-                                        style={{ color: "red" }}
-                                        fontSize="default"
-                                    ></CloseRoundedIcon> }
+                        {(botaoIndicaEnderecoDigitado !== null) ?
+                            <CheckCircleRoundedIcon
+                                style={{ color: "#05cc30" }}
+                                fontSize="default"
+                            ></CheckCircleRoundedIcon>
+                            :
+                            <CloseRoundedIcon
+                                style={{ color: "red" }}
+                                fontSize="default"
+                            ></CloseRoundedIcon>}
                         Endereço da ocorrência
 
                     </Typography>
@@ -194,7 +249,7 @@ const AdicionarOcorrencia = () => {
                             <div>
                                 <input type="radio" className="btn-check selected" name="opcao-mapa" id="selecionar-mapa" autoComplete="off" defaultChecked={localizacao} />
                                 <label className="btn btn-outline-primary" htmlFor="selecionar-mapa" onClick={handleSelecionarMapa} >Selecionar no mapa</label>
-                                
+
                             </div>
                             <input type="radio" className="btn-check" name="opcao-mapa" id="digitar-endereco" autoComplete="off" defaultChecked={botaoIndicaEnderecoDigitado} />
                             <label className="btn btn-outline-primary" htmlFor="digitar-endereco" onClick={handleDigitarEndereco}>Digitar endereço</label>
@@ -212,7 +267,34 @@ const AdicionarOcorrencia = () => {
                     </Typography>
                 </AccordionDetails>
             </Accordion>
-            <Accordion className="m-2 border">
+            <Card >
+
+                <CardContent>
+                    <Typography className="d-flex mb-3" variant="h5" component="div">
+                        Dados da ocorrência
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                        <TextField fullWidth className="mb-2" id="title" label="Titulo" variant="outlined" inputRef={title} required />
+                        <FormControl required fullWidth className="mb-2">
+                            <InputLabel id="demo-simple-select-label">Tipo da ocorrência</InputLabel>
+                            <Select required
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                value={typeOccurrenceSelected}
+                                label="Tipo da ocorrência"
+                                onChange={handleChangeTypeOccurrence}
+                            >
+                                <MenuItem value={''}><em>Selecione...</em></MenuItem>
+                                {typeOccurrence.map(item =>
+                                    <MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>
+                                )}
+                            </Select>
+                        </FormControl>
+                        <TextField fullWidth className="mb-2" id="description" label="Descrição" variant="outlined" inputRef={description} />
+                    </Typography>
+                </CardContent>
+            </Card>
+            {/* <Accordion className="m-2 border">
                 <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel2a-content" id="panel2a-header">
                     <Typography>Dados da ocorrência</Typography>
                 </AccordionSummary>
@@ -237,7 +319,7 @@ const AdicionarOcorrencia = () => {
                         <TextField fullWidth className="mb-2" id="description" label="Descrição" variant="outlined" inputRef={description} />
                     </Typography>
                 </AccordionDetails>
-            </Accordion>
+            </Accordion> */}
 
             <div style={{ height: 50 }}></div>
             <div className="card-footer" style={{
@@ -261,6 +343,8 @@ const AdicionarOcorrencia = () => {
                 </div>
             </div>
         </Form>
+
+
 
     </div>)
 }

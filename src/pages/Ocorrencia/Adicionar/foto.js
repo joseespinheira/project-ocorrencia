@@ -4,6 +4,7 @@ import Camera, { FACING_MODES, IMAGE_TYPES } from 'react-html5-camera-photo';
 import 'react-html5-camera-photo/build/css/index.css';
 import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { RecuperarDado } from "../../../components/Storage";
 
 async function salvarLocalStorage(img) {
     try {
@@ -28,6 +29,15 @@ function AdicionarFoto() {
         setImg([...img, dataUri]);
         salvarLocalStorage(img);
     }
+
+    useEffect(()=>{
+        async function getDataImagem(){
+            const data = await RecuperarDado('@SOAPP_IMAGENS');
+            const imagem = await JSON.parse(data);
+            setImg(imagem.imagens)
+        }
+        getDataImagem();
+    },[])
 
     useEffect(() => {
         if ('mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices) {
@@ -73,8 +83,7 @@ function AdicionarFoto() {
     }
     return (
         <div>
-            <label>Foto</label><br></br>
-            <Button className="botao m-1" onClick={handleGirar}>Girar</Button>
+            <Button className="botao m-1" onClick={handleGirar}>Alterar Camera</Button>
             <Button className="botao" onClick={handleProximo}>Proximo</Button>
             {frente ?
                 <Camera
@@ -83,9 +92,9 @@ function AdicionarFoto() {
                     idealFacingMode={FACING_MODES.USER}
                     onCameraError={(error) => { handleCameraError(error); }}
                     imageType={IMAGE_TYPES.JPG}
-                    imageCompression={0.99}
-                    isImageMirror={true}
-                    isDisplayStartCameraError={true}
+                    imageCompression={0.92}
+                    isImageMirror={false}
+                    isDisplayStartCameraError={false}
                     isFullscreen={false}
                     sizeFactor={1}
 
@@ -98,9 +107,9 @@ function AdicionarFoto() {
                     idealFacingMode={FACING_MODES.ENVIRONMENT}
                     onCameraError={(error) => { handleCameraError(error); }}
                     imageType={IMAGE_TYPES.JPG}
-                    imageCompression={0.97}
+                    imageCompression={0.92}
                     isImageMirror={true}
-                    isDisplayStartCameraError={true}
+                    isDisplayStartCameraError={false}
                     isFullscreen={false}
                     sizeFactor={1}
 

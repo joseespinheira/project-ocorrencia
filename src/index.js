@@ -20,6 +20,7 @@ import AdicionarUsuario from "./pages/Usuario/Adicionar";
 const root = ReactDOM.createRoot(
   document.getElementById("root")
 );
+
 root.render(
   <BrowserRouter>
     <Routes>

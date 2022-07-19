@@ -2,7 +2,7 @@ import { Form, Button, Container, Row, Col } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import 'mapbox-gl/dist/mapbox-gl.css';
 import api from "./services";
-import { GuardarDado } from "./components/Storage";
+import { GuardarDado, RemoverItem } from "./components/Storage";
 function App() {
   let navigate = useNavigate();
 
@@ -12,6 +12,11 @@ function App() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    RemoverItem("@SOAPP_FORMULARIO_BOTAO_ENDERECO")
+    RemoverItem("@SOAPP_LOCALIZACAO")
+    RemoverItem("@SOAPP_IMAGENS")
+    RemoverItem("@SOAPP_USUARIO")
+    RemoverItem("@SOAPP_TOKEN")
     const email = e.target.email.value;
     const senha = e.target.senha.value;
     const data = {
@@ -23,12 +28,12 @@ function App() {
       const retorno = await api.post('sanctum/token', data);
       if (retorno.status === 200) {
         const token = retorno.data[1];
-        const usuario = await api.get('auth/me', {headers:{Authorization:`Bearer ${token}`}});
+        const usuario = await api.get('auth/me', { headers: { Authorization: `Bearer ${token}` } });
 
         const dadosUsuario = usuario.data.data;
-        GuardarDado('@SOAPP_USUARIO',JSON.stringify(dadosUsuario));
+        GuardarDado('@SOAPP_USUARIO', JSON.stringify(dadosUsuario));
         GuardarDado('@SOAPP_TOKEN', token);
-        
+
         navigate('/home/ocorrencia')
       } else {
         console.log(retorno);
@@ -46,9 +51,12 @@ function App() {
         <Col className="">
           <Form className="border border-primary rounded p-4" onSubmit={handleSubmit}>
             <div className="d-flex justify-content-center">
-              <label>SOAPP</label>
+              <div className="text-center">
+                <h3>SOAPP</h3>
+                <h6>Aplicativo de ocorrências</h6>
+              </div>
             </div>
-            <hr></hr>
+            <hr className="mt-0"></hr>
 
             <Form.Group className="mb-3" controlId="email">
               <Form.Label>E-mail</Form.Label>
@@ -66,7 +74,7 @@ function App() {
             <Button variant="primary" type="submit">
               Entrar
             </Button>
-            <div>
+            <div className="mt-3">
               <Link to="usuario/novo">
                 Clique aqui para criar um usuário
               </Link>

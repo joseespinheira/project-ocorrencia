@@ -184,7 +184,9 @@ const AdicionarOcorrencia = () => {
 
     const validaCamposObrigatorios = () => {
         //retorna true em caso de problemas
-        console.log("aqui")
+        if(usarLocalAtual){
+            return false;
+        }
         if (botaoIndicaEnderecoDigitado === null) {
             setMensagemErro({
                 title: "Alerta!",
@@ -201,7 +203,6 @@ const AdicionarOcorrencia = () => {
         e.preventDefault();
 
         if (validaCamposObrigatorios()) {
-            console.log("aqui")
             return
         }
 

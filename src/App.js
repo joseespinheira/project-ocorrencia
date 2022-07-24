@@ -6,10 +6,6 @@ import { GuardarDado, RemoverItem } from "./components/Storage";
 function App() {
   let navigate = useNavigate();
 
-  const redirect = async (event) => {
-    navigate(`/home/ocorrencia`);
-  }
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     RemoverItem("@SOAPP_FORMULARIO_BOTAO_ENDERECO")

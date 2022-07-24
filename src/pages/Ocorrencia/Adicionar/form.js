@@ -1,78 +1,78 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useState } from "react";
-import { Button } from "react-bootstrap";
-import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import Input from "../../../components/Input";
-import api from '../../../services/index';
+// import AsyncStorage from "@react-native-async-storage/async-storage";
+// import { useState } from "react";
+// import { Button } from "react-bootstrap";
+// import { useForm } from "react-hook-form";
+// import { useNavigate } from "react-router-dom";
+// import Input from "../../../components/Input";
+// import api from '../../../services/index';
 
-async function limparCache() {
-    try {
-        await AsyncStorage.setItem('@app_ocorrecia_localizacao', '')
-        await AsyncStorage.setItem('@app_ocorrecia_imagens', '')
-    } catch (e) {
-        // saving error
-    }
-}
+// async function limparCache() {
+//     try {
+//         await AsyncStorage.setItem('@app_ocorrecia_localizacao', '')
+//         await AsyncStorage.setItem('@app_ocorrecia_imagens', '')
+//     } catch (e) {
+//         // saving error
+//     }
+// }
 
-function AdicionarFormulario() {
-    let navigate = useNavigate();
-    const { register, handleSubmit, watch, formState: { errors } } = useForm();
-    const [request, setRequest] = useState({
-        name: "Teste 10",
-        title: "fabiosantanagif@gmail.com",
-        description: "sdsds",
-        cpf: null,
-        rg: 101121515,
-        email: "fabiosantanagif@gmail.com",
-        issuings_id: 1,
-        clients_id: 4,
-        type_occurrences_id: 1,
-        status_occurrences_id: "1",
-        //address: "2 Travessa Do Ouro , Liberdade",
-        //user_id: null,
-        //latitude: "-12.970400",
-        //longitude: "-12.970400",
-        //cnpj: "18181223000168",
-        users_id: "1"
-    })
-    const onSubmit = async dados => {
-        //recuperar posicao do mapa e jogar no request
-        const dataCoords = await AsyncStorage.getItem('@app_ocorrecia_localizacao');
-        const coords = await JSON.parse(dataCoords);
+// function AdicionarFormulario() {
+//     let navigate = useNavigate();
+//     const { register, handleSubmit, watch, formState: { errors } } = useForm();
+//     const [request, setRequest] = useState({
+//         name: "Teste 10",
+//         title: "fabiosantanagif@gmail.com",
+//         description: "sdsds",
+//         cpf: null,
+//         rg: 101121515,
+//         email: "fabiosantanagif@gmail.com",
+//         issuings_id: 1,
+//         clients_id: 4,
+//         type_occurrences_id: 1,
+//         status_occurrences_id: "1",
+//         //address: "2 Travessa Do Ouro , Liberdade",
+//         //user_id: null,
+//         //latitude: "-12.970400",
+//         //longitude: "-12.970400",
+//         //cnpj: "18181223000168",
+//         users_id: "1"
+//     })
+//     const onSubmit = async dados => {
+//         //recuperar posicao do mapa e jogar no request
+//         const dataCoords = await AsyncStorage.getItem('@app_ocorrecia_localizacao');
+//         const coords = await JSON.parse(dataCoords);
 
-        const dataImagem = await AsyncStorage.getItem('@app_ocorrecia_imagens');
-        const imagens = await JSON.parse(dataImagem);
+//         const dataImagem = await AsyncStorage.getItem('@app_ocorrecia_imagens');
+//         const imagens = await JSON.parse(dataImagem);
 
-        const data = { ...request, ...dados, ...coords, ...imagens }
+//         const data = { ...request, ...dados, ...coords, ...imagens }
 
-        const response = await api.post('occurrences', data, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-            }
-        });
-        navigate(`/home/ocorrencia`);
-        limparCache();
-    };
+//         const response = await api.post('occurrences', data, {
+//             headers: {
+//                 'Content-Type': 'application/json',
+//                 'Accept': 'application/json',
+//             }
+//         });
+//         navigate(`/home/ocorrencia`);
+//         limparCache();
+//     };
 
-    return (
-        <div>
-            <div className="m-3"> <h3>Formulário</h3></div>
-            <form onSubmit={handleSubmit(onSubmit)}>
+//     return (
+//         <div>
+//             <div className="m-3"> <h3>Formulário</h3></div>
+//             <form onSubmit={handleSubmit(onSubmit)}>
 
-                <Input label="Nome" name="name" register={register} required />
-                <Input label="Título" name="title" register={register} required />
-                <Input label="Descrição" name="description" register={register} required />
-                <Input label="E-mail" name="email" register={register} required />
+//                 <Input label="Nome" name="name" register={register} required />
+//                 <Input label="Título" name="title" register={register} required />
+//                 <Input label="Descrição" name="description" register={register} required />
+//                 <Input label="E-mail" name="email" register={register} required />
 
-                {/* errors will return when field validation fails  */}
-                {errors.exampleRequired && <span>This field is required</span>}
+//                 {/* errors will return when field validation fails  */}
+//                 {errors.exampleRequired && <span>This field is required</span>}
 
-                <Button type="submit" className="botao" >Concluir</Button>
-            </form>
-        </div>
-    );
-}
+//                 <Button type="submit" className="botao" >Concluir</Button>
+//             </form>
+//         </div>
+//     );
+// }
 
-export default AdicionarFormulario;
+// export default AdicionarFormulario;

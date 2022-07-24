@@ -18,16 +18,13 @@ import { GuardarDado, RecuperarDado, RemoverItem } from "../../../components/Sto
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-
-
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import { useGeolocated } from "react-geolocated";
 
 const AdicionarOcorrencia = () => {
     let navigate = useNavigate();
@@ -37,18 +34,31 @@ const AdicionarOcorrencia = () => {
     const [localizacao, setLocalizacao] = useState(null);
     const [imagem, setImagem] = useState(null);
     const [usuario, setUsuario] = useState({});
+    const [mensagemErro, setMensagemErro] = useState('');
+    const [open, setOpen] = useState(false);
+    const [openLocal, setOpenLocal] = useState(true);
+    const [usarLocalAtual, setUsarLocalAtual] = useState(null);
+    const [openFoto, setOpenFoto] = useState(false);
+    const [carregando, setCarregando] = useState(true);
+    
     const title = useRef('');
     const description = useRef('');
-    const [mensagemErro, setMensagemErro] = React.useState('');
-    const [open, setOpen] = React.useState(false);
-
     const cep = useRef('');
     const endereco = useRef('');
     const bairro = useRef('');
     const cidade = useRef('');
     const estado = useRef('');
 
-    const [request, setRequest] = useState({
+    const { coords, isGeolocationAvailable, isGeolocationEnabled } =
+        useGeolocated({
+            positionOptions: {
+                enableHighAccuracy: false,
+            },
+            userDecisionTimeout: 5000,
+        });
+
+
+    const request = {
         // name: "Teste 10",
         // title: "",
         // description: "sdsds",
@@ -65,7 +75,7 @@ const AdicionarOcorrencia = () => {
         // longitude: "-12.970400",
         // cnpj: "18181223000168",
         users_id: "9999"//nao sei
-    })
+    }
 
     useEffect(() => {
         async function getTypeOccurrence() {
@@ -73,19 +83,22 @@ const AdicionarOcorrencia = () => {
                 //recupera informacao do botao de endereco selecionado
                 const botaoEndereco = await RecuperarDado('@SOAPP_FORMULARIO_BOTAO_ENDERECO');
                 setBotaoIndicaEnderecoDigitado(botaoEndereco === 'true' ? true : botaoEndereco === 'false' ? false : null);
+
                 // recupera os tipos de ocorrencias
                 const typeOccurrence = await api.get('typeOccurrence');
                 setTypeOccurrence(typeOccurrence.data.data);
+
                 // recupera a latitude e longitude quando tiver
-                if (botaoIndicaEnderecoDigitado !== null) {
-                    const jsonLocalizacao = await RecuperarDado('@SOAPP_LOCALIZACAO');
-                    const localizacao = await JSON.parse(jsonLocalizacao);
-                    setLocalizacao(localizacao);
-                }
+                //if (botaoIndicaEnderecoDigitado !== null) {
+                const jsonLocalizacao = await RecuperarDado('@SOAPP_LOCALIZACAO');
+                const localizacao = await JSON.parse(jsonLocalizacao);
+                setLocalizacao(localizacao);
+                //}
+
                 // recupera informacoes do usuario
                 const dadoUsuarioJson = await RecuperarDado('@SOAPP_USUARIO');
                 const dadoUsuario = await JSON.parse(dadoUsuarioJson);
-                if(dadoUsuario===null){
+                if (dadoUsuario === null) {
                     //caso o usuario não esteja autenticado
                     navigate('/');
                 }
@@ -96,27 +109,76 @@ const AdicionarOcorrencia = () => {
                 const dadoImagem = await JSON.parse(dadoImagemJson);
                 setImagem(dadoImagem);
 
+                //recupera dados do furmulario
+                const dadoFormularioJson = await RecuperarDado('@SOAPP_FORMULARIO_DATA');
+                const dadoFormulario = await JSON.parse(dadoFormularioJson);
+
+                setCarregando(false);
+                if (dadoFormulario) {
+                    if (botaoIndicaEnderecoDigitado) {
+                        console.log("Au")
+                        cep.current.value = dadoFormulario.cepVariavel ?? '';
+                        endereco.current.value = dadoFormulario.enderecoVariavel ?? '';
+                        bairro.current.value = dadoFormulario.bairroVariavel ?? '';
+                        cidade.current.value = dadoFormulario.cidadeVariavel ?? '';
+                        estado.current.value = dadoFormulario.estadoVariavel ?? '';
+                    }
+                    setTypeOccurrenceSelected(dadoFormulario.typeOccurrenceSelected);
+                    setOpenFoto(dadoFormulario.openFoto);
+                    setOpenLocal(dadoFormulario.openLocal);
+                    setUsarLocalAtual(dadoFormulario.usarLocalAtual);
+                    title.current.value = dadoFormulario.titleVariavel;
+                    description.current.value = dadoFormulario.descriptionVariavel;
+                }
             } catch (e) {
                 console.log(e);
-                console.log("erro ao pegar tipo de ocorrencia");
+                console.log("erro");
             }
         }
         getTypeOccurrence();
-    }, [])
+    }, [navigate])
+
+    const SetDadosFurmulario = () => {
+        const titleVariavel = title.current.value;
+        const descriptionVariavel = description.current.value;
+        const cepVariavel = cep.current.value;
+        const enderecoVariavel = endereco.current.value;
+        const bairroVariavel = bairro.current.value;
+        const cidadeVariavel = cidade.current.value;
+        const estadoVariavel = estado.current.value;
+
+        const data = {
+            titleVariavel,
+            descriptionVariavel,
+            cepVariavel,
+            enderecoVariavel,
+            bairroVariavel,
+            cidadeVariavel,
+            estadoVariavel,
+            typeOccurrenceSelected,
+            openLocal,
+            openFoto: false,
+            usarLocalAtual
+        }
+
+        GuardarDado('@SOAPP_FORMULARIO_DATA', JSON.stringify(data))
+    }
 
     const handleTirarFoto = () => {
+        SetDadosFurmulario();
         navigate(`/home/ocorrencia/addFoto`);
     }
 
     const handleSelecionarMapa = () => {
+        SetDadosFurmulario();
         setBotaoIndicaEnderecoDigitado(false);
         GuardarDado('@SOAPP_FORMULARIO_BOTAO_ENDERECO', false)
         navigate(`/home/ocorrencia/addMapa`);
     }
 
-    const handleDigitarEndereco = async () => {
+    const handleDigitarEndereco = () => {
         setBotaoIndicaEnderecoDigitado(true);
-        await GuardarDado('@SOAPP_FORMULARIO_BOTAO_ENDERECO', true)
+        GuardarDado('@SOAPP_FORMULARIO_BOTAO_ENDERECO', true)
 
     }
 
@@ -180,6 +242,7 @@ const AdicionarOcorrencia = () => {
                     RemoverItem("@SOAPP_FORMULARIO_BOTAO_ENDERECO")
                     RemoverItem("@SOAPP_LOCALIZACAO")
                     RemoverItem("@SOAPP_IMAGENS")
+                    RemoverItem("@SOAPP_FORMULARIO_DATA")
                     navigate("/home/ocorrencia")
                 } else {
                     console.log(response);
@@ -196,9 +259,84 @@ const AdicionarOcorrencia = () => {
     }
 
     const handleCancelar = () => {
+        RemoverItem("@SOAPP_FORMULARIO_BOTAO_ENDERECO")
+        RemoverItem("@SOAPP_LOCALIZACAO")
+        RemoverItem("@SOAPP_IMAGENS")
+        RemoverItem("@SOAPP_FORMULARIO_DATA")
         navigate(`/home/ocorrencia/`);
     }
-    return (<div>
+
+    const setLocalAtual=()=>{
+        if (coords) {
+            try {
+                GuardarDado('@SOAPP_LOCALIZACAO', JSON.stringify({
+                    latitude: coords.latitude,
+                    longitude: coords.longitude
+                }))
+            } catch (e) {
+                // saving error
+            }
+        }
+    }
+
+    return (<>{!carregando ? <div>
+
+        {/* Pergunta se está no local da ocorrência se usuario pemitiu a geolocalizacao */}
+        {!isGeolocationAvailable ? (
+            <div>Your browser does not support Geolocation</div>
+        ) : !isGeolocationEnabled ? (
+            <div>Geolocation is not enabled</div>
+        ) :
+            <Dialog
+                open={openLocal}
+                // onClose={() => { setOpenLocal(false) }}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">
+                    Está no local da ocorrência?
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        O aplicativo pode usar a localização atual para registrar a ocorrência?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => { setOpenLocal(false); setOpenFoto(true); }}>
+                        Não
+                    </Button>
+                    <Button onClick={() => { setOpenLocal(false); setUsarLocalAtual(true); setLocalAtual(); setOpenFoto(true); }} autoFocus>
+                        Sim
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        }
+
+        {/* Pergunta se quer tirar uma foto */}
+        <Dialog
+            open={openFoto}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+        >
+            <DialogTitle id="alert-dialog-title">
+                Foto
+            </DialogTitle>
+            <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                    Deseja tirar uma foto?
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={() => { setOpenFoto(false); SetDadosFurmulario(); }}>
+                    Não
+                </Button>
+                <Button onClick={() => { setOpenFoto(false); handleTirarFoto(); }} autoFocus>
+                    Sim
+                </Button>
+            </DialogActions>
+        </Dialog>
+
+        {/* Aviso de validação */}
         <Dialog
             open={open}
             onClose={() => { setOpen(false) }}
@@ -219,13 +357,15 @@ const AdicionarOcorrencia = () => {
                 </Button>
             </DialogActions>
         </Dialog>
-        <label>Criar Ocorrência</label>
+        <label className="m-2">Criar Ocorrência</label><hr className="mt-1" />
         <div>
             <Button className="m-1" onClick={handleTirarFoto}> Tirar Foto
             </Button>
             {/* <Button className="m-1">Selecionar foto</Button> */}
         </div>
         <Form onSubmit={handleSalvar}>
+
+            {(!usarLocalAtual )?
             <Accordion className="m-2 border">
                 <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
                     <Typography>
@@ -267,6 +407,7 @@ const AdicionarOcorrencia = () => {
                     </Typography>
                 </AccordionDetails>
             </Accordion>
+:''}
             <Card >
 
                 <CardContent>
@@ -346,7 +487,7 @@ const AdicionarOcorrencia = () => {
 
 
 
-    </div>)
+    </div> : "Carregando..."}</>)
 }
 
 export default AdicionarOcorrencia;

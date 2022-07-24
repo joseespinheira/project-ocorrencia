@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import './style.css'
 import api from '../../../services/index';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RecuperarDado } from "../../../components/Storage";
 
 function getTypeOccurrences(type) {
@@ -17,7 +16,7 @@ function getTypeOccurrences(type) {
 function Ocorrencia() {
     let navigate = useNavigate();
     const [carregando, setCarregando] = useState(true)
-    const [usuario, setUsuario] = useState({})
+    // const [usuario, setUsuario] = useState({})
 
     const handleClickAdd = async () => {
         navigate(`/home/ocorrencia/add`);
@@ -27,12 +26,20 @@ function Ocorrencia() {
 
     useEffect(() => {
         async function getData() {
-            const dados = await api.get('/occurrences');
-            setOcorrencias(dados.data.data);
-            setCarregando(false);
+
+            //recupera usuario
             const dadoUsuarioJson = await RecuperarDado('@SOAPP_USUARIO');
             const dadoUsuario = await JSON.parse(dadoUsuarioJson);
-            setUsuario(dadoUsuario);
+            // setUsuario(dadoUsuario);
+
+            let header = {}
+            if(!dadoUsuario){
+                navigate('/')
+            }
+            //https://sopadmin.herokuapp.com/api/occurrences/getOccurrenceByClientId/
+            const dados = await api.get(`/occurrences/getOccurrenceByClientId/${dadoUsuario.id}`);
+            setOcorrencias(dados.data.data);
+            setCarregando(false);
         }
         getData();
     }, [])
@@ -52,9 +59,10 @@ function Ocorrencia() {
                     </div >
                 </div > :
                 <div>
-                    <label className="m-2">Listar ocorrências</label>
+                    <label className="m-2">Listar ocorrências</label><hr className="mt-1"></hr>
                     <ul className="p-1">
-                        {ocorrencias.map((ocorrencia, index) =>
+
+                        {ocorrencias.length>0?ocorrencias.map((ocorrencia, index) =>
                             <li key={index}>
                                 <div onClick={() => handleClickDetalhe(ocorrencia.id)} className="border rounded p-1 mb-1 d-flex justify-content-between" >
                                     <div className="d-flex flex-column">
@@ -66,7 +74,7 @@ function Ocorrencia() {
                                     </span>
                                 </div>
                             </li>
-                        )}
+                        ):"Não há ocorrencias cadastradas"}
                     </ul>
 
                     <div className="fab">

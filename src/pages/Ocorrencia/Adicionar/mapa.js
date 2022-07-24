@@ -35,6 +35,7 @@ function Mapa() {
         }
         guardarDadosIniciais()
     }, [])
+    
     const mapRef = useRef();
     const size = useWindowSize();
     let navigate = useNavigate();

@@ -9,6 +9,7 @@ function Layout() {
         RemoverItem("@SOAPP_FORMULARIO_BOTAO_ENDERECO")
         RemoverItem("@SOAPP_LOCALIZACAO")
         RemoverItem("@SOAPP_IMAGENS")
+        RemoverItem("@SOAPP_FORMULARIO_DATA")
         RemoverItem("@SOAPP_USUARIO")
         RemoverItem("@SOAPP_TOKEN")
 

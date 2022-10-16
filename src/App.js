@@ -3,7 +3,14 @@ import { Link, useNavigate } from "react-router-dom";
 import 'mapbox-gl/dist/mapbox-gl.css';
 import api from "./services";
 import { GuardarDado, RemoverItem } from "./components/Storage";
+import moment from "moment";
+import 'moment/locale/pt-br';
+
 function App() {
+
+  const data = moment;
+  // data.locale('pt-br');
+
   let navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -48,7 +55,7 @@ function App() {
           <Form className="border border-primary rounded p-4" onSubmit={handleSubmit}>
             <div className="d-flex justify-content-center">
               <div className="text-center">
-                <h3>SOAPP</h3>
+                <h3>SOAPP - {data().format('LLLL')       }</h3>
                 <h6>Aplicativo de ocorrências</h6>
               </div>
             </div>

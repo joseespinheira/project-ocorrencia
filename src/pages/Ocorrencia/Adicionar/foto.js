@@ -9,7 +9,7 @@ import { RecuperarDado } from "../../../components/Storage";
 async function salvarLocalStorage(img) {
     try {
         await AsyncStorage.setItem('@SOAPP_IMAGENS', JSON.stringify({
-            imagens: img
+            anexo: img
         }))
     } catch (e) {
         // saving error
@@ -34,7 +34,7 @@ function AdicionarFoto() {
         async function getDataImagem(){
             const data = await RecuperarDado('@SOAPP_IMAGENS');
             const imagem = await JSON.parse(data);
-            setImg(imagem.imagens)
+            setImg(imagem.anexo)
         }
         getDataImagem();
     },[])

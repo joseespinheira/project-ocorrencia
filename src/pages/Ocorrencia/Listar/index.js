@@ -7,7 +7,11 @@ import { RecuperarDado } from "../../../components/Storage";
 function getTypeOccurrences(type) {
     switch (type) {
         case 1:
-            return "Pendente"
+            return "Aberta"
+        case 2:
+            return "Fechada"
+        case 3:
+            return "Em andamento"
         default:
             return "Desconhecido"
     }
@@ -33,7 +37,7 @@ function Ocorrencia() {
             // setUsuario(dadoUsuario);
 
             let header = {}
-            if(!dadoUsuario){
+            if (!dadoUsuario) {
                 navigate('/')
             }
             //https://sopadmin.herokuapp.com/api/occurrences/getOccurrenceByClientId/
@@ -62,7 +66,7 @@ function Ocorrencia() {
                     <label className="m-2">Listar ocorrências</label><hr className="mt-1"></hr>
                     <ul className="p-1">
 
-                        {ocorrencias.length>0?ocorrencias.map((ocorrencia, index) =>
+                        {ocorrencias.length > 0 ? ocorrencias.map((ocorrencia, index) =>
                             <li key={index}>
                                 <div onClick={() => handleClickDetalhe(ocorrencia.id)} className="border rounded p-1 mb-1 d-flex justify-content-between" >
                                     <div className="d-flex flex-column">
@@ -74,7 +78,7 @@ function Ocorrencia() {
                                     </span>
                                 </div>
                             </li>
-                        ):"Não há ocorrencias cadastradas"}
+                        ) : "Não há ocorrencias cadastradas"}
                     </ul>
 
                     <div className="fab">

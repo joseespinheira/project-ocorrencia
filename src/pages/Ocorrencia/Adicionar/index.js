@@ -74,7 +74,7 @@ const AdicionarOcorrencia = () => {
         // latitude: "-12.970400",
         // longitude: "-12.970400",
         // cnpj: "18181223000168",
-        users_id: "9999"//nao sei
+        users_id: "1"//nao sei
     }
 
     useEffect(() => {

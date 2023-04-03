@@ -14,7 +14,7 @@ const OcorrenciaDetalhe = () => {
 
         async function getData() {
             const dados = await api.get('occurrences/' + id);
-            setOcorrencia(dados.data.data);
+            setOcorrencia(dados.data);
             setCarregando(false);
         }
         getData();

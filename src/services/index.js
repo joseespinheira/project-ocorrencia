@@ -2,7 +2,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const api = axios.create({
-  baseURL: 'https://sopadmin1v.domcloud.io/api', 
+  baseURL: 'https://sopadmin.fly.dev/api', 
 });
 
 

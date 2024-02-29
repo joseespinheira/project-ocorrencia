@@ -36,7 +36,6 @@ function Ocorrencia() {
             const dadoUsuario = await JSON.parse(dadoUsuarioJson);
             // setUsuario(dadoUsuario);
 
-            let header = {}
             if (!dadoUsuario) {
                 navigate('/')
             }
@@ -46,7 +45,7 @@ function Ocorrencia() {
             setCarregando(false);
         }
         getData();
-    }, [])
+    }, [navigate])
 
     const handleClickDetalhe = (id) => {
         navigate(`/home/ocorrencia/${id}`);

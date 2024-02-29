@@ -26,6 +26,8 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useGeolocated } from "react-geolocated";
 
+const key = process.env.GOOGLE_MAPS_API_KEY;
+
 const AdicionarOcorrencia = () => {
     let navigate = useNavigate();
     const [botaoIndicaEnderecoDigitado, setBotaoIndicaEnderecoDigitado] = useState(null);
@@ -136,7 +138,7 @@ const AdicionarOcorrencia = () => {
             }
         }
         getTypeOccurrence();
-    }, [navigate])
+    }, [navigate,botaoIndicaEnderecoDigitado])
 
     const SetDadosFurmulario = () => {
         const titleVariavel = title.current.value;
@@ -242,11 +244,14 @@ const AdicionarOcorrencia = () => {
                   };
 
                 const data = new FormData();
-                data.append('clients_id', dadoOcorrencia.clients_id);
-                imagem.img.forEach(foto => {
-                    let blob = convertBase64ToBlob(foto);
-                    data.append("anexo[]",blob,"arquivo.jpeg");
-                });
+                
+                if(imagem && imagem.img){
+                    imagem.img.forEach(foto => {
+                        let blob = convertBase64ToBlob(foto);
+                        data.append("anexo[]",blob,"arquivo.jpeg");
+                    });
+                }
+
                 for (const chave in dadoOcorrencia) {
                     if (dadoOcorrencia.hasOwnProperty(chave)) {
                         data.append(chave, dadoOcorrencia[chave]);
@@ -266,11 +271,14 @@ const AdicionarOcorrencia = () => {
                     if (localizacao.hasOwnProperty(chave)) {
                         data.append(chave, localizacao[chave]);
                     }
+                    if(!dadoEndereco.endereco){
+                        const endereco = await recuperarEndereco(localizacao);
+                        dadoEndereco.endereco = endereco;
+                        data.append("address",endereco);
+                    }
                 }
 
                 const response = await api.post("occurrences", data, config);
-
-                console.log(response);
 
                 if (response.status === 201) {
                     RemoverItem("@SOAPP_FORMULARIO_BOTAO_ENDERECO")
@@ -286,6 +294,17 @@ const AdicionarOcorrencia = () => {
             }
         }
         salvar();
+    }
+
+    const recuperarEndereco = async (localizacao)=>{
+        try{
+            const resultado = await api.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${localizacao.latitude},${localizacao.longitude}&key=${key}`);
+            const end = resultado.results[0];
+            return end.formatted_address;
+        }catch (e){
+            console.log(e);
+            return "-";
+        }
     }
 
     /**
@@ -325,10 +344,14 @@ const AdicionarOcorrencia = () => {
         RemoverItem("@SOAPP_FORMULARIO_DATA")
         navigate(`/home/ocorrencia/`);
     }
-
+    
     const setLocalAtual=()=>{
         if (coords) {
             try {
+                setLocalizacao({
+                    latitude: coords.latitude,
+                    longitude: coords.longitude
+                })
                 GuardarDado('@SOAPP_LOCALIZACAO', JSON.stringify({
                     latitude: coords.latitude,
                     longitude: coords.longitude

@@ -9,7 +9,7 @@ import { RecuperarDado } from "../../../components/Storage";
 async function salvarLocalStorage(img) {
     try {
         await AsyncStorage.setItem('@SOAPP_IMAGENS', JSON.stringify({
-            anexo: img
+            img
         }))
     } catch (e) {
         // saving error

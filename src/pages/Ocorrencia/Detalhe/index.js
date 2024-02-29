@@ -55,15 +55,7 @@ const OcorrenciaDetalhe = () => {
                                 <label>{ocorrencia.description}</label>
                             </div>
                             <div className="d-flex flex-column mb-3 border p-1 rounded">
-                                <label>latitude:</label>
-                                <label>{ocorrencia.latitude}</label>
-                            </div>
-                            <div className="d-flex flex-column mb-3 border p-1 rounded">
-                                <label>longitude:</label>
-                                <label>{ocorrencia.longitude}</label>
-                            </div>
-                            <div className="d-flex flex-column mb-3 border p-1 rounded">
-                                <label>status_occurrences_id:</label>
+                                <label>Status da ocorrencia:</label>
                                 <label>{ocorrencia.status_occurrences_id}</label>
                             </div>
                             <div className="d-flex flex-column mb-3 border p-1 rounded">

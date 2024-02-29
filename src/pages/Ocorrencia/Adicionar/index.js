@@ -231,13 +231,46 @@ const AdicionarOcorrencia = () => {
             estado: estadoVariavel
         }
 
-        //falta as imagens
-
-        const data = { ...localizacao, ...dadoEndereco, ...dadoOcorrencia, ...imagem, ...request }
+        
 
         async function salvar() {
             try {
-                const response = await api.post("occurrences", data);
+                const config = {
+                    headers: {
+                      'content-type': 'image/jpeg;multipart/form-data'
+                    },
+                  };
+
+                const data = new FormData();
+                data.append('clients_id', dadoOcorrencia.clients_id);
+                imagem.img.forEach(foto => {
+                    let blob = convertBase64ToBlob(foto);
+                    data.append("anexo[]",blob,"arquivo.jpeg");
+                });
+                for (const chave in dadoOcorrencia) {
+                    if (dadoOcorrencia.hasOwnProperty(chave)) {
+                        data.append(chave, dadoOcorrencia[chave]);
+                    }
+                }
+                for (const chave in request) {
+                    if (request.hasOwnProperty(chave)) {
+                        data.append(chave, request[chave]);
+                    }
+                }
+                for (const chave in dadoEndereco) {
+                    if (dadoEndereco.hasOwnProperty(chave)) {
+                        data.append(chave, dadoEndereco[chave]);
+                    }
+                }
+                for (const chave in localizacao) {
+                    if (localizacao.hasOwnProperty(chave)) {
+                        data.append(chave, localizacao[chave]);
+                    }
+                }
+
+                const response = await api.post("occurrences", data, config);
+
+                console.log(response);
 
                 if (response.status === 201) {
                     RemoverItem("@SOAPP_FORMULARIO_BOTAO_ENDERECO")
@@ -253,6 +286,32 @@ const AdicionarOcorrencia = () => {
             }
         }
         salvar();
+    }
+
+    /**
+     * Convert BASE64 to BLOB
+     * @param base64Image Pass Base64 image data to convert into the BLOB
+     */
+    function convertBase64ToBlob(base64Image) {
+        // Split into two parts
+        const parts = base64Image.split(';base64,');
+    
+        // Hold the content type
+        const imageType = parts[0].split(':')[1];
+    
+        // Decode Base64 string
+        const decodedData = window.atob(parts[1]);
+    
+        // Create UNIT8ARRAY of size same as row data length
+        const uInt8Array = new Uint8Array(decodedData.length);
+    
+        // Insert all character code into uInt8Array
+        for (let i = 0; i < decodedData.length; ++i) {
+            uInt8Array[i] = decodedData.charCodeAt(i);
+        }
+    
+        // Return BLOB image after conversion
+        return new Blob([uInt8Array], { type: imageType });
     }
 
     const handleChangeTypeOccurrence = (e) => {

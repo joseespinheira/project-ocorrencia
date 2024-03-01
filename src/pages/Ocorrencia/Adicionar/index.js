@@ -26,9 +26,9 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useGeolocated } from "react-geolocated";
 
-const key = process.env.GOOGLE_MAPS_API_KEY;
+const GOOGLE_KEY = `key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`;
 
-const AdicionarOcorrencia = () => {
+function AdicionarOcorrencia () {
     let navigate = useNavigate();
     const [botaoIndicaEnderecoDigitado, setBotaoIndicaEnderecoDigitado] = useState(null);
     const [typeOccurrence, setTypeOccurrence] = useState([]);
@@ -298,7 +298,7 @@ const AdicionarOcorrencia = () => {
 
     const recuperarEndereco = async (localizacao)=>{
         try{
-            const resultado = await api.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${localizacao.latitude},${localizacao.longitude}&key=${key}`);
+            const resultado = await api.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${localizacao.latitude},${localizacao.longitude}&${GOOGLE_KEY}`);
             const end = resultado.results[0];
             return end.formatted_address;
         }catch (e){

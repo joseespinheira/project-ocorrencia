@@ -296,10 +296,10 @@ function AdicionarOcorrencia () {
         salvar();
     }
 
-    const recuperarEndereco = async (localizacao)=>{
+    async function recuperarEndereco (localizacao) {
         try{
             const resultado = await api.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${localizacao.latitude},${localizacao.longitude}&${GOOGLE_KEY}`);
-            const end = resultado.results[0];
+            const end = resultado.data.results[0];
             return end.formatted_address;
         }catch (e){
             console.log(e);
